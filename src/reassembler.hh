@@ -68,5 +68,5 @@ private:
   ByteStream output_;
   uint64_t capacity_;
   uint64_t last_byte_index_ = -1;
-  std::multimap<uint64_t, std::string> unassembled_substrings_ {};
+  std::multimap<uint64_t, std::string> pending_data_ {};
 };

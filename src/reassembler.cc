@@ -19,23 +19,22 @@ void Reassembler::insert( uint64_t first_index, std::string data, bool is_last_s
   if ( first_index < next_byte_index() + available_capacity() && first_index + data.length() > next_byte_index() ) {
     uint64_t insert_key = std::max( first_index, next_byte_index() );
 
-    unassembled_substrings_.insert( std::make_pair(
+    pending_data_.insert( std::make_pair(
       insert_key,
       data.substr( insert_key - first_index,
                    std::min( data.length(), next_byte_index() + available_capacity() - insert_key ) ) ) );
     // 每次插入都需要进行合并
     merge_substrings();
 
-    if ( unassembled_substrings_.begin()->first == next_byte_index() ) {
-      output_.writer().push( unassembled_substrings_.begin()->second );
+    if ( pending_data_.begin()->first == next_byte_index() ) {
+      output_.writer().push( pending_data_.begin()->second );
 
-      if ( unassembled_substrings_.begin()->first + unassembled_substrings_.begin()->second.length() - 1
-           == last_byte_index_ ) {
+      if ( pending_data_.begin()->first + pending_data_.begin()->second.length() - 1 == last_byte_index_ ) {
         output_.writer().close();
       }
 
       // 删除已经处理完的子串
-      unassembled_substrings_.erase( unassembled_substrings_.begin() );
+      pending_data_.erase( pending_data_.begin() );
     }
   }
 }
@@ -43,7 +42,7 @@ void Reassembler::insert( uint64_t first_index, std::string data, bool is_last_s
 uint64_t Reassembler::bytes_pending() const
 {
   uint64_t count = 0;
-  for ( auto it = unassembled_substrings_.begin(); it != unassembled_substrings_.end(); ++it ) {
+  for ( auto it = pending_data_.begin(); it != pending_data_.end(); it++ ) {
     count += it->second.length();
   }
   return count;
@@ -52,20 +51,20 @@ uint64_t Reassembler::bytes_pending() const
 // 合并重叠的子串
 void Reassembler::merge_substrings()
 {
-  if ( unassembled_substrings_.size() <= 1 )
+  if ( pending_data_.size() <= 1 )
     return;
 
-  auto it = unassembled_substrings_.begin();
+  auto it = pending_data_.begin();
   auto next = std::next( it );
 
   // 遍历合并。
-  while ( next != unassembled_substrings_.end() ) {
+  while ( next != pending_data_.end() ) {
     // 如果当前子串和下一个子串有重叠
     if ( it->first + it->second.length() >= next->first ) {
 
       // 如果当前子串完全包含下一个子串，直接删除下一个子串
       if ( it->first + it->second.length() >= next->first + next->second.length() ) {
-        next = unassembled_substrings_.erase( next );
+        next = pending_data_.erase( next );
         continue;
       }
 
@@ -74,7 +73,7 @@ void Reassembler::merge_substrings()
       it->second += next->second.substr( overlap_index );
 
       // 删除下一个子串
-      next = unassembled_substrings_.erase( next );
+      next = pending_data_.erase( next );
     } else {
       it++;
       next++;

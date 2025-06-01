@@ -49,7 +49,7 @@ protected:
   static constexpr size_t kReadBufferSize = 16384;
 
   void set_eof() { internal_fd_->eof_ = true; }
-  void register_read() { ++internal_fd_->read_count_; } // increment read count
+  void register_read() { ++internal_fd_->read_count_; }   // increment read count
   void register_write() { ++internal_fd_->write_count_; } // increment write count
 
   template<typename T>
@@ -86,10 +86,10 @@ public:
   off_t size() const;
 
   // FDWrapper accessors
-  int fd_num() const { return internal_fd_->fd_; } // underlying descriptor number
-  bool eof() const { return internal_fd_->eof_; }       // EOF flag state
-  bool closed() const { return internal_fd_->closed_; } // closed flag state
-  unsigned int read_count() const { return internal_fd_->read_count_; } // number of reads
+  int fd_num() const { return internal_fd_->fd_; }                        // underlying descriptor number
+  bool eof() const { return internal_fd_->eof_; }                         // EOF flag state
+  bool closed() const { return internal_fd_->closed_; }                   // closed flag state
+  unsigned int read_count() const { return internal_fd_->read_count_; }   // number of reads
   unsigned int write_count() const { return internal_fd_->write_count_; } // number of writes
 
   // Copy/move constructor/assignment operators
