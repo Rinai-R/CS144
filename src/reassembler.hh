@@ -60,7 +60,6 @@ public:
 
   uint64_t available_capacity() const { return writer().available_capacity(); };
   uint64_t next_byte_index() const { return writer().bytes_pushed(); };
-  uint64_t first_unpopped_index() const { return next_byte_index() + available_capacity() - capacity_; };
 
   void merge_substrings();
 
