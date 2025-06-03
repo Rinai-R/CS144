@@ -14,7 +14,7 @@ public:
   // 构造函数：接受一个原始的 32 位无符号整数值并初始化
   explicit Wrap32( uint32_t raw_value ) : raw_value_( raw_value ) {}
 
-  /* 
+  /*
    * wrap 方法：通过给定的绝对序列号 n 和零点（Wrap32 对象）来构造一个 Wrap32 对象。
    * 这是一个静态方法，返回的 Wrap32 对象根据给定的序列号进行包装。
    */
@@ -35,5 +35,5 @@ public:
   bool operator==( const Wrap32& other ) const { return raw_value_ == other.raw_value_; }
 
 protected:
-  uint32_t raw_value_ {};  // 存储包装后的原始值
+  uint32_t raw_value_ {}; // 存储包装后的原始值
 };
